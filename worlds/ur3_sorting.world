@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="ur3_sorting">
+    <gravity>0 0 -9.81</gravity>
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <physics name="default_physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <model name="work_table">
+      <static>true</static>
+      <pose>0 0 0.40 0 0 0</pose>
+      <link name="table_link">
+        <collision name="table_collision">
+          <geometry><box><size>0.90 0.80 0.80</size></box></geometry>
+        </collision>
+        <visual name="table_visual">
+          <geometry><box><size>0.90 0.80 0.80</size></box></geometry>
+          <material><ambient>0.68 0.58 0.43 1</ambient><diffuse>0.68 0.58 0.43 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Neutral dark mats make the three calibrated placement zones visible
+         in Gazebo without matching any of the block color masks. -->
+    <model name="zone_a_marker"><static>true</static><pose>0.02 0.14 0.801 0 0 0</pose><link name="marker">
+      <collision name="collision"><geometry><box><size>0.12 0.12 0.002</size></box></geometry></collision>
+      <visual name="visual"><geometry><box><size>0.12 0.12 0.002</size></box></geometry><material><ambient>0.16 0.16 0.16 1</ambient><diffuse>0.16 0.16 0.16 1</diffuse></material></visual>
+    </link></model>
+    <model name="zone_b_marker"><static>true</static><pose>0.02 -0.14 0.801 0 0 0</pose><link name="marker">
+      <collision name="collision"><geometry><box><size>0.12 0.12 0.002</size></box></geometry></collision>
+      <visual name="visual"><geometry><box><size>0.12 0.12 0.002</size></box></geometry><material><ambient>0.16 0.16 0.16 1</ambient><diffuse>0.16 0.16 0.16 1</diffuse></material></visual>
+    </link></model>
+    <model name="zone_c_marker"><static>true</static><pose>0.18 0.14 0.801 0 0 0</pose><link name="marker">
+      <collision name="collision"><geometry><box><size>0.12 0.12 0.002</size></box></geometry></collision>
+      <visual name="visual"><geometry><box><size>0.12 0.12 0.002</size></box></geometry><material><ambient>0.16 0.16 0.16 1</ambient><diffuse>0.16 0.16 0.16 1</diffuse></material></visual>
+    </link></model>
+
+    <!-- Reproducible occupancy case: blue_cube starts in zone_b. -->
+    <model name="blue_cube"><pose>0.02 -0.14 0.827 0 0 0</pose><link name="link">
+      <inertial><mass>0.045</mass><inertia><ixx>0.000019</ixx><iyy>0.000019</iyy><izz>0.000019</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="collision"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision>
+      <visual name="visual"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><material><ambient>0.03 0.08 0.95 1</ambient><diffuse>0.03 0.08 0.95 1</diffuse></material></visual>
+    </link></model>
+    <model name="red_cube"><pose>-0.07 0.00 0.825 0 0 0</pose><link name="link">
+      <inertial><mass>0.045</mass><inertia><ixx>0.000019</ixx><iyy>0.000019</iyy><izz>0.000019</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="collision"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision>
+      <visual name="visual"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><material><ambient>0.95 0.02 0.02 1</ambient><diffuse>0.95 0.02 0.02 1</diffuse></material></visual>
+    </link></model>
+    <model name="yellow_cube"><pose>-0.10 0.27 0.825 0 0 0</pose><link name="link">
+      <inertial><mass>0.045</mass><inertia><ixx>0.000019</ixx><iyy>0.000019</iyy><izz>0.000019</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="collision"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision>
+      <visual name="visual"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><material><ambient>0.98 0.78 0.02 1</ambient><diffuse>0.98 0.78 0.02 1</diffuse></material></visual>
+    </link></model>
+    <model name="green_cube"><pose>-0.05 -0.31 0.825 0 0 0</pose><link name="link">
+      <inertial><mass>0.045</mass><inertia><ixx>0.000019</ixx><iyy>0.000019</iyy><izz>0.000019</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="collision"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision>
+      <visual name="visual"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><material><ambient>0.02 0.88 0.04 1</ambient><diffuse>0.02 0.88 0.04 1</diffuse></material></visual>
+    </link></model>
+    <model name="purple_cube"><pose>0.10 0.30 0.825 0 0 0</pose><link name="link">
+      <inertial><mass>0.045</mass><inertia><ixx>0.000019</ixx><iyy>0.000019</iyy><izz>0.000019</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="collision"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><surface><friction><ode><mu>2.0</mu><mu2>2.0</mu2></ode></friction></surface></collision>
+      <visual name="visual"><geometry><box><size>0.05 0.05 0.05</size></box></geometry><material><ambient>0.55 0.02 0.68 1</ambient><diffuse>0.55 0.02 0.68 1</diffuse></material></visual>
+    </link></model>
+  </world>
+</sdf>

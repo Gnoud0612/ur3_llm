@@ -1,0 +1,250 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>Báo cáo Bài thực hành 03</title>
+<style>
+@page { size:A4; margin: 16mm 17mm 16mm 17mm; }
+* { box-sizing:border-box; }
+body { font-family:"Liberation Sans","DejaVu Sans",Arial,sans-serif; color:#243747; font-size:10.3pt; line-height:1.28; margin:0; }
+.page { page-break-after:always; position:relative; }
+.page:last-child { page-break-after:auto; }
+h1,h2,h3 { color:#17324D; margin:0 0 7pt; }
+h1 { font-size:22pt; line-height:1.12; }
+h2 { font-size:15pt; border-bottom:2px solid #2C7DA0; padding-bottom:5pt; margin-top:0; }
+h3 { font-size:11.5pt; margin-top:10pt; }
+p { margin:5pt 0 7pt; }
+ul,ol { margin:3pt 0 7pt 18pt; padding:0; }
+li { margin:2pt 0; }
+.small { font-size:8.7pt; color:#526779; }
+.muted { color:#526779; }
+.kicker { color:#2676A8; font-size:9pt; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; margin:0 0 6pt; }
+.rule { border:0; border-top:1px solid #B8C9D6; margin:12pt 0; }
+.callout { background:#EAF4F6; border-left:4px solid #2676A8; padding:8pt 10pt; margin:8pt 0; }
+.status { background:#FFF2E7; border-left:4px solid #E68A3A; padding:8pt 10pt; margin:7pt 0; }
+.good { background:#EAF5F0; border-left:4px solid #2E8B72; padding:8pt 10pt; margin:7pt 0; }
+table { border-collapse:collapse; width:100%; margin:7pt 0 9pt; font-size:9.3pt; }
+th { background:#17324D; color:white; text-align:left; padding:6pt; }
+td { border:1px solid #CBD6DF; padding:5pt 6pt; vertical-align:top; }
+tr:nth-child(even) td { background:#F5F8FA; }
+code,pre { font-family:"Liberation Mono","DejaVu Sans Mono",monospace; font-size:8.6pt; }
+pre { background:#F2F5F7; border:1px solid #D7E0E6; padding:7pt 9pt; white-space:pre-wrap; margin:6pt 0; }
+img.diagram { width:100%; height:auto; margin:5pt 0; }
+figcaption { font-size:8.5pt; color:#526779; text-align:center; margin:0 0 6pt; }
+.cover { height:260mm; background:#F7FAFC; padding:20mm 16mm 14mm; border-top:13mm solid #17324D; }
+.cover h1 { font-size:30pt; margin:5mm 0; }
+.cover .subtitle { font-size:16pt; color:#2676A8; font-weight:bold; margin:0 0 14mm; }
+.cover .meta { margin-top:10mm; width:100%; }
+.cover .meta td { border:0; border-bottom:1px solid #C8D5DF; background:transparent!important; padding:7pt 3pt; }
+.cover .meta td:first-child { width:33%; color:#526779; }
+.cover .badge { display:inline-block; background:#DDF3F4; color:#17324D; padding:6pt 10pt; border-radius:12pt; font-weight:bold; margin:5pt 0; }
+.twocol { width:100%; }
+.twocol td { width:50%; border:0; vertical-align:top; padding:2pt 4pt; }
+.center { text-align:center; }
+.pagefoot { color:#718392; border-top:1px solid #D5DEE5; padding-top:4pt; margin-top:10pt; font-size:8pt; }
+</style></head><body>
+<section class="page cover">
+<p class="kicker">ĐẠI HỌC QUỐC GIA HÀ NỘI · TRƯỜNG ĐẠI HỌC CÔNG NGHỆ</p>
+<p class="small">Khoa/Viện: [Điền khoa hoặc bộ môn]</p>
+<hr class="rule">
+<p class="kicker">BÁO CÁO BÀI THỰC HÀNH 03</p>
+<h1>LLM Skill Planning<br>với Gripper và Camera</h1>
+<p class="subtitle">Robot UR3/UR3e · ROS 2 · MoveIt 2 · Gazebo Classic</p>
+<p>Thiết kế bộ lập kế hoạch kỹ năng có nhận biết trạng thái môi trường, sử dụng camera RGB-D để phát hiện block và kiểm tra vùng đặt trước khi điều khiển robot.</p>
+<img class="diagram" src="assets/so_do_kien_truc.png" style="margin-top:7mm;">
+<table class="meta"><tr><td>Sinh viên</td><td>[Họ và tên]</td></tr><tr><td>Mã số sinh viên</td><td>[MSSV]</td></tr><tr><td>Lớp học phần</td><td>[Mã lớp / nhóm]</td></tr><tr><td>Giảng viên</td><td>[Tên giảng viên]</td></tr><tr><td>Ngày hoàn thiện</td><td>[Ngày nộp]</td></tr></table>
+<div class="status"><b>Trạng thái minh chứng:</b> camera đã nhận diện vị trí block và tình trạng Zone B; robot đã tiếp cận/hạ theo một lần chạy ghi nhận. Gripper chưa nâng được vật thành công, vì vậy nhiệm vụ đầy đủ chưa hoàn tất.</div>
+<p class="small">Bản Word có thể chỉnh sửa. Thay các nội dung trong ngoặc vuông, bổ sung link video/repository và cập nhật minh chứng của lần chạy cuối trước khi nộp.</p>
+</section>
+
+<section class="page">
+<p class="kicker">TÓM TẮT · ABSTRACT</p><h2>Tóm tắt báo cáo</h2>
+<p>Bài thực hành xây dựng hệ thống điều khiển UR3/UR3e bằng kế hoạch kỹ năng do LLM lựa chọn, trong đó trạng thái block và vùng đặt được lấy từ camera RGB-D trong Gazebo. Bài toán trọng tâm là xử lý yêu cầu đặt một block vào zone đang bị chiếm. Camera phân đoạn màu, kết hợp ảnh độ sâu và phép biến đổi TF để ước lượng vị trí vật trong hệ tọa độ <i>base_link</i>; trạng thái này được dùng để biên dịch kế hoạch, kiểm tra vị trí tạm và kiểm tra tính hợp lệ trước khi thực thi.</p>
+<p>LLM chỉ phân tích câu lệnh, chọn object/zone và sắp xếp skill. LLM không sinh trực tiếp lệnh khớp hoặc quỹ đạo. MoveIt 2 lập kế hoạch chuyển động cánh tay; gripper được điều khiển qua trajectory controller. Executor chạy từng skill, nhận quan sát mới và dừng khi phát hiện sai khác hoặc không xác nhận được kết quả.</p>
+<div class="callout"><b>Kết quả thực nghiệm cần trình bày trung thực:</b> camera đã phát hiện blue_cube và báo Zone B bị chiếm. Trong log minh chứng, robot đã đi đến thao tác hạ theo đường Cartesian nhưng MoveIt/gripper báo lỗi và camera không xác nhận blue_cube được nâng. Do đó, bước chuyển vật ra vị trí tạm và nhiệm vụ đặt vật đích chưa được chứng minh hoàn tất.</div>
+<h3>Thông tin nhanh</h3>
+<table><tr><th>Hạng mục</th><th>Nội dung</th></tr>
+<tr><td>Bài toán</td><td>Đặt green_cube vào Zone B; xử lý blue_cube đang chiếm zone bằng vị trí tạm.</td></tr>
+<tr><td>Thành phần</td><td>UR3/UR3e, gripper hai ngón, camera RGB-D, Gazebo Classic, ROS 2, MoveIt 2.</td></tr>
+<tr><td>Đóng góp cần mô tả</td><td>Perception theo camera; lập kế hoạch có điều kiện; Plan Validator; skill pick/place/home; kiểm tra va chạm và xác nhận sau thao tác.</td></tr>
+<tr><td>Kết quả</td><td>Nhận diện và phát hiện zone chiếm chỗ: có. Gắp/nâng vật và hoàn tất tác vụ: chưa đạt.</td></tr></table>
+<h3>Từ khóa</h3><p>LLM planner; robot skill; RGB-D; MoveIt 2; UR3; Gazebo; gripper; plan validation.</p>
+<p class="small">Trang này được thiết kế như phần tóm tắt 01 trang; có thể xuất riêng thành PDF ngắn theo checklist bài tập.</p>
+<div class="pagefoot">Bài thực hành 03 · Khung báo cáo để chỉnh sửa</div>
+</section>
+
+<section class="page">
+<p class="kicker">01 · BÀI TOÁN VÀ YÊU CẦU</p><h2>Mục tiêu, phạm vi và tiêu chí</h2>
+<h3>1.1 Bối cảnh</h3>
+<p>Trong bài toán phân loại, người dùng mô tả vật cần di chuyển bằng ngôn ngữ tự nhiên. Nếu zone đích đang trống, hệ thống có thể lập kế hoạch pick → place. Khi zone bị chiếm, robot cần quan sát môi trường, chuyển vật cản đến một điểm tạm an toàn, sau đó mới thao tác với vật được yêu cầu. Bởi môi trường có 05 block và 03 zone, trạng thái chiếm chỗ không thể được giả định cố định.</p>
+<h3>1.2 Mục tiêu thiết kế</h3>
+<ul><li>Nhận câu lệnh, xác định vật đích và zone đích.</li><li>Dùng camera để xác định vị trí các block và trạng thái từng zone.</li><li>Tạo kế hoạch kỹ năng có điều kiện khi zone bị chiếm.</li><li>Kiểm tra schema, workspace, trạng thái vật và thứ tự skill trước khi chạy.</li><li>Điều khiển cánh tay qua MoveIt 2 và gripper vật lý trong mô phỏng; không dịch chuyển pose object để giả lập gắp.</li><li>Ghi nhận kết quả, dừng an toàn khi thao tác không được xác nhận.</li></ul>
+<h3>1.3 Yêu cầu và tình trạng trong lần chạy được ghi nhận</h3>
+<table><tr><th>Yêu cầu</th><th>Cách đáp ứng trong thiết kế</th><th>Kết quả ghi nhận</th></tr>
+<tr><td>UR3/UR3e và gripper</td><td>UR3 trong Gazebo; gripper hai ngón điều khiển bằng trajectory action.</td><td>Gripper được ra lệnh đóng; chưa xác nhận vật được giữ/nâng.</td></tr>
+<tr><td>Camera và trạng thái scene</td><td>RGB-D, phân đoạn màu, depth, CameraInfo và TF.</td><td>Nhận diện block; Zone B được báo occupied_by=blue_cube.</td></tr>
+<tr><td>Zone bị chiếm</td><td>Chèn tìm điểm trống, dọn vật cản, rồi thao tác vật đích.</td><td>Kế hoạch được in/validate; thực thi dừng trong bước pick vật cản.</td></tr>
+<tr><td>Plan Validator</td><td>Kiểm tra trạng thái camera, workspace, mục tiêu và skill sequence.</td><td>Log cho thấy kế hoạch hợp lệ trước khi thực thi.</td></tr>
+<tr><td>LLM không điều khiển khớp</td><td>LLM trả về core plan kỹ năng; MoveIt tạo quỹ đạo.</td><td>Kiến trúc tách planner và bộ điều khiển.</td></tr></table>
+<div class="callout"><b>Tiêu chí nghiệm thu phần mềm khác với kết quả robot:</b> sinh/kiểm tra được kế hoạch là kết quả của planner; gắp và nâng vật phải được xác nhận độc lập từ gripper, trạng thái quan sát và chuyển động vật. Không suy diễn thao tác gắp thành công chỉ từ việc ngón gripper đóng.</div>
+<div class="pagefoot">1 · Bài toán và yêu cầu</div>
+</section>
+
+<section class="page">
+<p class="kicker">02 · KIẾN TRÚC PHẦN MỀM</p><h2>Luồng dữ liệu và các node chính</h2>
+<figure><img class="diagram" src="assets/so_do_kien_truc.png"><figcaption>Hình 1. Kiến trúc dữ liệu và lệnh điều khiển của hệ thống.</figcaption></figure>
+<p>Pipeline giữ nguyên nguyên tắc: lệnh tự nhiên → LLM Planner → kế hoạch có cấu trúc → robot skills → MoveIt 2/controllers → robot trong Gazebo. Camera cung cấp trạng thái môi trường cho bộ lập kế hoạch và validator. Sau thao tác, quan sát camera mới được dùng để đánh giá việc vật có được nâng hoặc đặt hay không.</p>
+<table><tr><th>Module / package</th><th>Trách nhiệm</th><th>Giao diện hoặc file liên quan</th></tr>
+<tr><td>vision_node</td><td>Nhận RGB-D, phân đoạn block, đổi tọa độ và suy ra zone occupancy.</td><td>/vision/objects, /vision/debug; vision_node.py</td></tr>
+<tr><td>LLMPlanner</td><td>Hiểu lệnh; trả core plan theo schema; có parser cục bộ dự phòng.</td><td>llm_planner.py; LLM_BASE_URL / LLM_MODEL</td></tr>
+<tr><td>PlanValidator</td><td>Biên dịch kế hoạch theo camera; kiểm tra object, zone, vị trí tạm và workspace.</td><td>plan_validator.py; config/scene.yaml</td></tr>
+<tr><td>SkillPlanningExecutor</td><td>Nhận state; validate; thực hiện từng skill; kiểm tra trạng thái mới.</td><td>executor.py</td></tr>
+<tr><td>RobotSkills</td><td>Gọi MoveIt cho arm motion và gripper controller cho thao tác hai ngón.</td><td>robot_skills.py; /move_action; gripper trajectory action</td></tr>
+<tr><td>Simulation / config</td><td>UR3, bàn, 03 zone, 05 block, camera, controllers và giới hạn chuyển động.</td><td>worlds/ur3_sorting.world; launch; config/</td></tr></table>
+<div class="status"><b>Ranh giới điều khiển:</b> kế hoạch JSON mô tả tên skill và tham số ngữ nghĩa. Quỹ đạo khớp được MoveIt lập từ trạng thái robot, pose mục tiêu và collision scene; LLM không xuất joint trajectory.</div>
+<div class="pagefoot">2 · Kiến trúc phần mềm</div>
+</section>
+
+<section class="page">
+<p class="kicker">03 · MÔI TRƯỜNG VÀ CAMERA</p><h2>Scene mô phỏng và nhận biết trạng thái</h2>
+<h3>3.1 Mô hình môi trường</h3>
+<p>World Gazebo Classic gồm UR3, gripper, camera RGB-D nhìn từ trên, bàn thao tác, ba zone và năm cube màu. Zone được định nghĩa trong <i>config/scene.yaml</i>; block có thể dịch chuyển nên vị trí đang quan sát lấy từ camera, không đọc từ danh sách tọa độ cố định để ra quyết định.</p>
+<figure><img class="diagram" src="assets/so_do_mat_ban.png" style="width:55%;height:auto"><figcaption>Hình 2. Phác họa bố trí mặt bàn để giải thích hệ tọa độ; vị trí minh họa theo cấu hình/lần chạy.</figcaption></figure>
+<table><tr><th>Tham số scene</th><th>Giá trị cấu hình</th><th>Ý nghĩa</th></tr>
+<tr><td>Tâm zone_a</td><td>(0.27, 0.14) m</td><td>Tọa độ phẳng trong base_link.</td></tr>
+<tr><td>Tâm zone_b</td><td>(0.27, −0.14) m</td><td>Vùng đích minh họa, bán kính kiểm tra 0.060 m.</td></tr>
+<tr><td>Tâm zone_c</td><td>(0.43, 0.14) m</td><td>Tọa độ phẳng trong base_link.</td></tr>
+<tr><td>Workspace</td><td>x: 0.08–0.47 m; y: −0.35–0.33 m</td><td>Miền thao tác đã khai báo; còn kiểm tra tầm với.</td></tr>
+<tr><td>Độ cao thao tác</td><td>approach 0.22 m; grasp 0.09 m; lift 0.20 m</td><td>Giá trị cấu hình trong motion block, chưa đồng nghĩa với gắp thành công.</td></tr></table>
+<h3>3.2 Pipeline camera</h3>
+<figure><img class="diagram" src="assets/so_do_camera.png"><figcaption>Hình 3. Xử lý màu, depth và TF để tạo quan sát trong base_link.</figcaption></figure>
+<p>Ảnh RGB được chuyển sang HSV và lọc theo dải màu của red/yellow/green/blue/purple. Sau bước hình thái học, contour phù hợp được lấy tâm pixel. Depth quanh điểm đó được lấy mẫu; CameraInfo cung cấp nội tại camera và TF đổi sang base_link. Điểm được so với tâm/radius các zone để gán occupant. Khi vật bị cánh tay che, không có quan sát mới đáng tin cậy thì executor phải dừng hoặc yêu cầu xác nhận lại.</p>
+<div class="pagefoot">3 · Môi trường và camera</div>
+</section>
+
+<section class="page">
+<p class="kicker">04 · LLM PLANNING VÀ VALIDATION</p><h2>Lập kế hoạch có nhận biết zone bị chiếm</h2>
+<h3>4.1 Phân chia trách nhiệm</h3>
+<p>LLM nhận câu lệnh và trả về core plan với object, đích và skill cơ bản. Planner dùng state mới nhất từ camera để mở rộng core plan theo điều kiện scene. Nếu zone đích đang có vật khác, kế hoạch thêm bước tìm điểm tạm phù hợp, chuyển vật đang chiếm chỗ ra ngoài, rồi mới di chuyển vật đích. Parser cục bộ có thể thay LLM endpoint khi cần chạy demo offline.</p>
+<h3>4.2 Ví dụ nhiệm vụ</h3>
+<pre>User: Put the green cube in Zone B.
+Camera: zone_b.occupied_by = blue_cube
+
+check_zone(zone_b)
+find_free_position(blue_cube) → điểm camera xác nhận trống
+pick(blue_cube) → place(blue_cube, temporary_position)
+pick(green_cube) → place(green_cube, zone_b)
+home()</pre>
+<figure><img class="diagram" src="assets/so_do_zone_b.png"><figcaption>Hình 4. Nhánh kế hoạch khi Zone B đang bị blue_cube chiếm.</figcaption></figure>
+<h3>4.3 Kiểm tra trước khi thực thi</h3>
+<ul><li>Schema và skill hợp lệ; kế hoạch kết thúc ở trạng thái không giữ vật.</li><li>Đúng object người dùng yêu cầu và đúng zone đích.</li><li>Vật cản quan sát được; vị trí tạm nằm trong workspace, cách vật khác khoảng an toàn và không trùng zone.</li><li>Zone/điểm tạm được kiểm tra lại sát thời điểm thực thi; nếu môi trường thay đổi, dừng và yêu cầu lập kế hoạch lại.</li><li>Thực thi dừng tại lỗi MoveIt/gripper hoặc khi camera không xác nhận kết quả.</li></ul>
+<div class="callout"><b>Ý nghĩa validator:</b> Plan Validator là cổng kiểm tra cấu trúc và trạng thái, không phải chứng minh đường đi khả thi động lực học. Tính khả thi còn phụ thuộc MoveIt, collision geometry, controller, hiệu chuẩn camera/robot và tiếp xúc thực tế.</div>
+<div class="pagefoot">4 · LLM planning và validation</div>
+</section>
+
+<section class="page">
+<p class="kicker">05 · SKILL VÀ ĐIỀU KHIỂN ROBOT</p><h2>Pick, place, gripper và kiểm tra va chạm</h2>
+<h3>5.1 Mô tả skill ở mức ngữ nghĩa</h3>
+<table><tr><th>Skill</th><th>Thao tác dự kiến</th><th>Điều kiện xác nhận</th></tr>
+<tr><td>check_zone(zone)</td><td>So sánh trạng thái camera hiện tại với vật đã quan sát trong kế hoạch.</td><td>Occupant không đổi; nếu đổi thì dừng.</td></tr>
+<tr><td>find_free_position(object)</td><td>Chọn điểm ứng viên trong workspace, kiểm tra khoảng cách và trạng thái camera.</td><td>Điểm còn trống ở thời điểm dùng.</td></tr>
+<tr><td>pick(object)</td><td>Mở gripper; tiếp cận pose quan sát; hạ theo phương đứng; đóng hai ngón; nâng.</td><td>Camera thấy vật đã nâng hoặc bước xác nhận sau nhả; đóng ngón đơn lẻ chưa đủ.</td></tr>
+<tr><td>place(object,target)</td><td>Đưa vật đang giữ đến tọa độ zone/điểm tạm, hạ, mở gripper và rút lên.</td><td>Camera xác nhận vật ở đích và zone có occupant đúng.</td></tr>
+<tr><td>home()</td><td>Đưa robot về tư thế home cấu hình.</td><td>MoveIt/controller báo hoàn tất.</td></tr></table>
+<h3>5.2 Cơ chế chuyển động</h3>
+<p>MoveIt nhận mục tiêu pose và collision scene gồm mặt bàn cùng vị trí block lấy từ camera. Khâu tiếp cận giữ block mục tiêu trong collision scene; phần hạ cuối là đường Cartesian theo phương đứng. Cánh tay di chuyển bằng controller quỹ đạo khớp. Gripper là hai khớp trượt được điều khiển qua action FollowJointTrajectory; đây là thao tác cơ khí trong mô phỏng, không có lệnh teleport object.</p>
+<p>Trong cấu hình, điểm approach/grasp/lift lần lượt là z = 0.22/0.09/0.20 m và giới hạn tốc độ/gia tốc đặt 0.10. Các con số là giá trị thử nghiệm ban đầu; độ cao chính xác cần hiệu chuẩn với mặt bàn, tool frame, kích thước cube và hình học gripper.</p>
+<div class="status"><b>Giới hạn kết quả hiện tại:</b> minh chứng cho thấy robot đã thực hiện/được lập đường hạ thẳng đứng trong lần thử, nhưng bước nâng bị lỗi và camera không xác nhận vật rời mặt bàn. Báo cáo không kết luận lực kẹp là nguyên nhân đã được chứng minh. Khe gripper, vị trí tool center point, tiếp xúc ngón và timeout controller cần được đo/kiểm tra riêng.</div>
+<h3>5.3 An toàn và tính nhất quán trạng thái</h3>
+<ul><li>Không tiếp tục gắp nếu không có camera state đủ mới hoặc target đã dịch chuyển.</li><li>Không di chuyển cánh tay qua vật cản bằng cách bỏ collision checking.</li><li>Nếu gắp/thả chưa xác nhận, dừng chuỗi thay vì giả định vật đã được chuyển.</li></ul>
+<div class="pagefoot">5 · Skill và điều khiển robot</div>
+</section>
+
+<section class="page">
+<p class="kicker">06 · THIẾT KẾ THỬ NGHIỆM</p><h2>Quy trình chạy và các phép thử</h2>
+<h3>6.1 Điều kiện chạy</h3>
+<p>Môi trường được mô tả trong package là ROS 2 Humble, Gazebo Classic, MoveIt 2 và Ubuntu [điền phiên bản thực tế]. World khởi tạo năm cube và ba zone. Ghi rõ commit/hash code, thời điểm chạy, endpoint LLM hoặc chế độ fallback, độ phân giải camera và thay đổi nào so với cấu hình mặc định:</p>
+<ul><li>Máy tính / OS: [điền]</li><li>ROS 2 / Gazebo / MoveIt: [điền phiên bản]</li><li>LLM endpoint/model hoặc LLM_ENABLED=false: [điền; không đưa API key vào báo cáo]</li><li>Workspace source revision: [git commit]</li></ul>
+<h3>6.2 Khởi chạy</h3>
+<pre>cd ~/workspaces/ur_gz
+colcon build --packages-select ur3_llm --symlink-install
+source install/setup.bash
+ros2 launch ur3_llm simulation.launch.py</pre>
+<p>Mở terminal thứ hai để chạy planner/executor:</p>
+<pre>source ~/workspaces/ur_gz/install/setup.bash
+export LLM_BASE_URL=http://localhost:20128/v1
+export LLM_MODEL=[ten-model]
+export LLM_API_KEY=[khong ghi khoa that vao bao cao]
+ros2 run ur3_llm executor</pre>
+<p>Kiểm tra camera bằng lệnh <code>ros2 topic echo /vision/objects --once</code>. Nhập lệnh thử tại prompt executor, ví dụ <code>Put the green cube in Zone B.</code>. Nếu cửa sổ xem trực tiếp cần hiện, chạy trong phiên desktop GUI; topic ảnh debug được publish riêng.</p>
+<h3>6.3 Kịch bản và kỳ vọng</h3>
+<table><tr><th>Test case</th><th>Điều kiện</th><th>Kỳ vọng</th><th>Trạng thái báo cáo</th></tr>
+<tr><td>T1: camera</td><td>Các cube nhìn thấy rõ.</td><td>Nhận diện tên, vị trí, zone occupancy.</td><td>Đã quan sát được trong ảnh/log minh chứng.</td></tr>
+<tr><td>T2: zone đích có vật</td><td>Zone B chứa blue_cube.</td><td>Validator thêm bước dọn occupant qua vị trí tạm.</td><td>Kế hoạch được tạo; chuỗi chưa hoàn tất.</td></tr>
+<tr><td>T3: pick vật cản</td><td>Blue cube còn ở Zone B.</td><td>Approach, hạ, kẹp, nâng và xác nhận.</td><td>Không đạt: chưa xác nhận blue_cube được nâng.</td></tr>
+<tr><td>T4: vật đích và home</td><td>Chỉ chạy sau khi vật cản đã dọn thành công.</td><td>Đặt green_cube vào Zone B, rồi home.</td><td>Chưa thực hiện do T3 dừng sớm.</td></tr></table>
+<div class="callout"><b>Nguyên tắc trình bày:</b> phân biệt “plan hợp lệ”, “MoveIt tạo/thi hành một đoạn”, “gripper đóng”, và “vật được nâng/đặt”. Chỉ mục cuối mới xác nhận thành công pick/place.</div>
+<div class="pagefoot">6 · Thiết kế thử nghiệm</div>
+</section>
+
+<section class="page">
+<p class="kicker">07 · KẾT QUẢ THỰC NGHIỆM</p><h2>Kết quả quan sát được và lỗi khi gắp</h2>
+<table class="twocol"><tr>
+<td><img src="assets/minh_chung_terminal.jpg" style="width:100%;height:auto"><figcaption>Hình 5a. Log lần chạy: nhận occupant, chọn điểm tạm và dừng tại pick.</figcaption></td>
+<td><img src="assets/minh_chung_camera.jpg" style="width:100%;height:auto"><figcaption>Hình 5b. Cửa sổ camera RGB-D có nhãn block và trạng thái zone.</figcaption></td>
+</tr></table>
+<h3>7.1 Diễn giải log và hình ảnh</h3>
+<pre>zone_b: occupied_by=blue_cube
+find_free_position(blue_cube) -> (0.380, 0.000)
+pick(blue_cube) at camera (0.273, -0.135)
+MoveIt Cartesian vertical path: z=0.220 -> 0.090
+MoveIt Cartesian vertical path: z=0.090 -> 0.200
+MoveIt failed at tool target (...), error_code=-2
+Camera did not confirm that blue_cube was grasped.</pre>
+<p>Trong lần chạy minh họa, camera có nhãn blue_cube ở gần tọa độ (0.264, −0.127) m và thanh trạng thái báo Zone B đang bị blue_cube chiếm. Planner chọn một ứng viên điểm tạm và in “VALIDATION: Kế hoạch hợp lệ theo camera và workspace”. Robot tiếp cận/hạ đến độ cao grasp theo log, sau đó quá trình MoveIt/gripper thất bại; ảnh và log không chứng minh vật đã rời mặt bàn. Executor dừng tại bước pick blue_cube nên các bước place vật cản, pick green_cube, place Zone B và home không được xác nhận hoàn tất.</p>
+<div class="status"><b>Kết luận test:</b> đạt phần quan sát trạng thái và lập/kiểm tra kế hoạch; chưa đạt phần gắp/nâng vật; nhiệm vụ đầu-cuối chưa hoàn thành. Hình trên là minh chứng trạng thái lỗi, không phải video demo thành công.</div>
+<h3>7.2 Bảng tổng hợp</h3>
+<table><tr><th>Chỉ tiêu</th><th>Kết quả</th><th>Minh chứng</th></tr>
+<tr><td>Camera xác định block/vị trí</td><td>Đạt ở lần chạy ghi nhận.</td><td>Nhãn và tọa độ trên cửa sổ; /vision/objects.</td></tr>
+<tr><td>Zone B occupancy</td><td>Đạt: blue_cube.</td><td>Overlay camera và log executor.</td></tr>
+<tr><td>Plan có kiểm tra</td><td>Đạt ở bước validate trước thực thi.</td><td>Thông báo VALIDATION trong terminal.</td></tr>
+<tr><td>Blue cube gắp/nâng</td><td>Chưa đạt / chưa được xác nhận.</td><td>MoveIt error; camera không xác nhận nâng.</td></tr>
+<tr><td>Đặt green_cube và home</td><td>Chưa thực hiện trong chuỗi này.</td><td>Executor dừng trước các bước sau.</td></tr></table>
+<div class="pagefoot">7 · Kết quả thực nghiệm</div>
+</section>
+
+<section class="page">
+<p class="kicker">08 · ĐÁNH GIÁ VÀ HOÀN THIỆN</p><h2>Thảo luận, kết luận và kế hoạch tiếp theo</h2>
+<h3>8.1 Nhận xét</h3>
+<p>Pipeline camera có thể cung cấp vị trí block và trạng thái zone đủ để planner tạo một kế hoạch có điều kiện. Validator chặn được bước tiếp theo khi thao tác pick không thành công, giúp trạng thái kế hoạch không bị giả định là đồng nhất với trạng thái vật lý. Tuy vậy, đây mới là kiểm thử từng phần: robot chưa chứng minh được thao tác gắp thật trong Gazebo và tác vụ dọn Zone B chưa đi hết chuỗi.</p>
+<h3>8.2 Nguyên nhân cần kiểm tra tiếp</h3>
+<p>Log hiện có chỉ cho biết lỗi MoveIt/gripper và xác nhận nâng thất bại; chưa đủ để kết luận nguyên nhân duy nhất là thiếu lực kẹp. Các giả thuyết cần đo/kiểm tra gồm:</p>
+<ol><li>Hệ tọa độ/tool center point và độ cao mặt bàn so với grasp_z.</li><li>Khe mở hai ngón khi tiếp cận và khe đóng so với bề rộng cube; điểm chạm ngón có nằm hai bên cube hay không.</li><li>Collision geometry của gripper/cube và trạng thái target trong planning scene khi hạ.</li><li>Joint limit, controller state, goal-time/path tolerance và phản hồi action gripper.</li><li>Sai số hiệu chuẩn RGB-D→base_link, độ trễ ảnh và dịch chuyển cube do va chạm trong approach.</li><li>Độ ma sát/khối lượng cube và vật liệu tiếp xúc trong Gazebo.</li></ol>
+<h3>8.3 Kế hoạch hoàn thiện theo thứ tự</h3>
+<table><tr><th>Bước</th><th>Việc cần làm</th><th>Tiêu chí qua</th></tr>
+<tr><td>1</td><td>Kiểm tra controller/joint state và giới hạn gripper; chạy đóng/mở không có cube.</td><td>Action báo success, hai ngón đến đúng vị trí lặp lại.</td></tr>
+<tr><td>2</td><td>Đo kích thước cube, khoảng cách hai ngón, TCP và tọa độ grasp trên mặt bàn.</td><td>Gripper đặt đối xứng hai bên cube, không va bàn.</td></tr>
+<tr><td>3</td><td>Chạy thử pick một cube ở vùng trống; ghi lại pose, log, ảnh trước/sau.</td><td>Cube rời mặt bàn và camera xác nhận độ cao thay đổi.</td></tr>
+<tr><td>4</td><td>Chạy trường hợp Zone B bị chiếm; xác nhận từng lần place bằng camera.</td><td>Blue cube ở điểm tạm, green cube ở Zone B, robot home.</td></tr></table>
+<div class="good"><b>Kết luận:</b> đã xây dựng được cấu trúc LLM skill planning có nhận biết camera, validator và đường điều khiển MoveIt/gripper. Kết quả hiện tại chứng minh được perception và lập kế hoạch; thao tác gắp chưa thành công nên phần demo đầy đủ còn là công việc tiếp theo.</div>
+<h3>8.4 Tài liệu trong package để đối chiếu</h3>
+<p class="small">README.md; ur3_llm/vision_node.py; ur3_llm/llm_planner.py; ur3_llm/plan_validator.py; ur3_llm/robot_skills.py; ur3_llm/executor.py; config/scene.yaml; launch/simulation.launch.py; launch/moveit.launch.py; worlds/ur3_sorting.world.</p>
+<div class="pagefoot">8 · Đánh giá và hoàn thiện</div>
+</section>
+
+<section class="page">
+<p class="kicker">PHỤ LỤC · CHECKLIST NỘP BÀI</p><h2>Thông tin cần bổ sung trước khi nộp</h2>
+<p>Checklist dưới đây được rút gọn theo yêu cầu nộp Bài 02 trong ảnh tham khảo, áp dụng cho gói báo cáo Bài 03. Thay các ô trống sau khi hoàn thiện repository và video:</p>
+<table><tr><th>Hạng mục</th><th>Điền / kiểm tra</th></tr>
+<tr><td>Video demo</td><td>[Dán link Google Drive ở chế độ người chấm có thể xem. Video nên cho thấy trạng thái thành công/thất bại đúng thực tế.]</td></tr>
+<tr><td>GitHub public</td><td>[Dán URL repository; kiểm tra truy cập Public.]</td></tr>
+<tr><td>Repository có đủ</td><td>Source code; launch; config; prompt; README hướng dẫn cài/chạy; nội dung độc lập với repo bài trước hoặc đặt trong nhánh assignments_2 theo yêu cầu.</td></tr>
+<tr><td>PDF ngắn 01 trang</td><td>Có thể xuất trang “Tóm tắt” của báo cáo này; nêu kiến trúc, package/node, skills, luồng lệnh → LLM → skill → MoveIt → robot, kết quả và link.</td></tr>
+<tr><td>Hình ảnh minh họa</td><td>Ảnh cửa sổ camera, log validator và lỗi gắp; thêm ảnh/video mới nếu có lần chạy tốt hơn.</td></tr>
+<tr><td>Thông tin cá nhân</td><td>Họ tên, MSSV, nhóm, lớp học phần, giảng viên, ngày nộp.</td></tr>
+<tr><td>Trạng thái demo</td><td>Ghi rõ đã nhận diện/đã lập kế hoạch nhưng chưa gắp/nâng được; không ghi hoàn thành pick-place khi chưa có minh chứng.</td></tr></table>
+<h3>Danh sách hình</h3>
+<ol><li>Kiến trúc tổng thể.</li><li>Minh họa mặt bàn và zone.</li><li>Pipeline xử lý camera RGB-D.</li><li>Chuỗi xử lý zone bị chiếm.</li><li>Ảnh log và camera tại lần thử chưa gắp được.</li></ol>
+<h3>Ghi chú chỉnh sửa</h3>
+<p>Đây là khung báo cáo có nội dung nền dựa trên package và log hiện có. Trước khi nộp, đối chiếu ảnh/log với đúng phiên bản code sẽ nộp; cập nhật cấu hình thực tế, link repo/video, kết quả mới nhất và nhận xét của nhóm. Nếu chạy lại thành công, thay bảng kết quả cùng hình minh chứng; giữ lịch sử thử nghiệm thất bại nếu cần giải thích quá trình phát triển.</p>
+<div class="callout"><b>Thông tin cần nhóm xác nhận:</b> [số đo gripper/cube], [phiên bản OS và ROS], [commit nộp], [link video], [link GitHub], [mã lớp/MSSV].</div>
+<p class="center" style="margin-top:18pt;font-weight:bold;color:#2676A8">— HẾT —</p>
+<div class="pagefoot">Phụ lục · Checklist và thông tin hoàn thiện</div>
+</section>
+</body></html>

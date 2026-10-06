@@ -1,0 +1,59 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+    gripper_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - shoulder_pan_joint
+      - shoulder_lift_joint
+      - elbow_joint
+      - wrist_1_joint
+      - wrist_2_joint
+      - wrist_3_joint
+    command_interfaces: [position]
+    state_interfaces: [position, velocity]
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+
+gripper_controller:
+  ros__parameters:
+    joints:
+      - left_finger_joint
+      - right_finger_joint
+    # Effort output is needed for physical contact: position commands in
+    # gazebo_ros2_control set the joint position directly and do not produce
+    # a sustained pinch force when a cube blocks the fingers.
+    command_interfaces: [effort]
+    state_interfaces: [position, velocity]
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    gains:
+      left_finger_joint:
+        p: 1200.0
+        i: 0.0
+        d: 8.0
+        i_clamp: 0.0
+        ff_velocity_scale: 0.0
+      right_finger_joint:
+        p: 1200.0
+        i: 0.0
+        d: 8.0
+        i_clamp: 0.0
+        ff_velocity_scale: 0.0
+    constraints:
+      stopped_velocity_tolerance: 0.02
+      goal_time: 2.0
+      # Cube contact stops a jaw before its free-space endpoint. The action
+      # also supplies this tolerance explicitly; camera lift verification is
+      # still required before the task proceeds.
+      left_finger_joint: {trajectory: 0.040, goal: 0.024}
+      right_finger_joint: {trajectory: 0.040, goal: 0.024}

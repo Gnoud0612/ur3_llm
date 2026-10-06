@@ -1,0 +1,47 @@
+objects:
+  - red_cube
+  - yellow_cube
+  - blue_cube
+  - green_cube
+  - purple_cube
+
+zones:
+  zone_a: [0.27, 0.14]
+  zone_b: [0.27, -0.14]
+  zone_c: [0.43, 0.14]
+
+vision:
+  zone_radius: 0.060
+  min_area: 70.0
+  depth_patch: 7
+  min_depth_m: 0.05
+  max_depth_m: 3.0
+  max_state_age_s: 2.0
+
+workspace:
+  x_min: 0.08
+  x_max: 0.47
+  y_min: -0.35
+  y_max: 0.33
+  max_reach: 0.49
+  object_clearance: 0.085
+  table_z: 0.0
+
+temporary_candidates:
+  - [0.20, -0.22]
+  - [0.20, 0.22]
+  - [0.38, 0.00]
+  - [0.35, -0.30]
+  - [0.38, 0.29]
+  - [0.44, -0.22]
+  - [0.10, -0.30]
+  - [0.12, 0.00]
+  - [0.12, 0.30]
+
+motion:
+  approach_z: 0.22
+  grasp_z: 0.09
+  lift_z: 0.20
+  home_joints: [0.0, -1.5708, 1.5708, -1.5708, -1.5708, 0.0]
+  max_velocity_scaling: 0.10
+  max_acceleration_scaling: 0.10

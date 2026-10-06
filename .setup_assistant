@@ -1,0 +1,9 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: ur3_llm
+    relative_path: urdf/ur3_llm.urdf.xacro
+  srdf:
+    relative_path: config/ur3_llm.srdf
+  package_settings:
+    author_name: ""
+    author_email: ""
